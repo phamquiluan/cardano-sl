@@ -28,6 +28,9 @@ module Pos.Configuration
 
        -- * Transaction resubmition constants
        , pendingTxResubmitionPeriod
+
+       -- * Wallet constants
+       , walletTxCreationDisabled
        ) where
 
 import           Universum
@@ -76,6 +79,9 @@ data NodeConfiguration = NodeConfiguration
       -- ^ InvMsg propagation queue capacity
     , ccPendingTxResubmissionPeriod :: !Int
       -- ^ Minimal delay between pending transactions resubmission
+    , ccWalletTxCreationDisabled    :: !Bool
+      -- ^ Disallow transaction creation or re-submission of
+      -- pending transactions by the wallet
     } deriving (Show, Generic)
 
 instance FromJSON NodeConfiguration where
@@ -153,3 +159,13 @@ mdNoBlocksSlotThreshold = fromIntegral . ccMdNoBlocksSlotThreshold $ nodeConfigu
 
 pendingTxResubmitionPeriod :: HasNodeConfiguration => Second
 pendingTxResubmitionPeriod = fromIntegral . ccPendingTxResubmissionPeriod $ nodeConfiguration
+
+----------------------------------------------------------------------------
+-- Wallet parameters
+----------------------------------------------------------------------------
+
+-- | If 'True', wallet should *not* create new transactions or re-submit
+-- existing pending transactions.
+walletTxCreationDisabled :: HasNodeConfiguration => Bool
+walletTxCreationDisabled = ccWalletTxCreationDisabled $ nodeConfiguration
+
